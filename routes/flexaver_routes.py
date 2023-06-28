@@ -22,21 +22,6 @@ async def create_upload_file(name: str = Body(...) ,category: str =  Body(...)  
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# async def create_upload_file(name: str ,category: str  , code: code_dict  , status: bool = False):
-#     try:
-#         # Create the data to be inserted
-#         flex_message = Flexmessage(
-#             name=name,
-#             category=category,
-#             code=code.dict(),
-#             status=status
-#         )
-#         # Insert data into the database
-#         collection.insert_one(flex_message.dict()).inserted_id
-#         return {"status": "Success"}
-    
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
 
 @user.get("/api/flexmessage/")
 async def get_all_flex_messages(page: int = 1, per_page: int = 10):
@@ -66,20 +51,23 @@ async def get_flex_message(message_id: str):
 
 
 @user.put("/api/flexmessage/{message_id}")
-async def update_flex_message(message_id: str, data: Flexmessage):
+async def update_flex_message(message_id: str, name: str = Body(...), category: str = Body(...), code_flexmessage: code_dict = Body(...), status: bool = Body(False)):
     try:
-        code_dict = data.dict()
+        # Find the flex message by ID
+        flex_message = collection.find_one({"id": message_id})
+        if flex_message:
+            # Update the flex message fields
+            flex_message["name"] = name
+            flex_message["category"] = category
+            flex_message["code_flexmessage"] = code_flexmessage.dict()
+            flex_message["status"] = status
 
-        result = collection.update_one(
-            {"id": message_id}, {"$set": code_dict})
-
-        if result.modified_count > 0:
-            updated_data = collection.find_one({"id": message_id})
-            serialized_data = flexmessages_serializer([updated_data])
-            return {"status": "Ok", "data": serialized_data}
+            # Update the flex message in the database
+            collection.update_one({"id": message_id}, {"$set": flex_message})
+            return {"status": "Success"}
         else:
             raise HTTPException(status_code=404, detail="Flex message not found")
-    
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
