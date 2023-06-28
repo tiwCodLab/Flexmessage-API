@@ -1,7 +1,6 @@
-import os
 from pymongo import MongoClient
+import setting as ENV
 
-mongodb_uri = "mongodb+srv://admin:1234@cluster0.k3ldto4.mongodb.net/"
-db_connection = MongoClient(mongodb_uri)
-db = db_connection["flexaverDB"]
-collection = db["flexaverDB"]
+db_connection = MongoClient(ENV.MONGODB_URI)
+db = db_connection[ENV.DATABASE_NAME]
+collection = db[ENV.DATABASE_NAME]

@@ -4,7 +4,6 @@ from schemas.flexaver_schema import flexmessages_serializer, datas_serializer
 from config.db import collection
 user = APIRouter()
 
-# กำหนด URI ของ MongoDB Atlas
 
 @user.post("/api/flexmessage/")
 async def create_upload_file(name: str = Body(...) ,category: str =  Body(...)  , code_flexmessage: code_dict =  Body(...)  , status: bool =  Body(False)):
@@ -22,7 +21,7 @@ async def create_upload_file(name: str = Body(...) ,category: str =  Body(...)  
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 # async def create_upload_file(name: str ,category: str  , code: code_dict  , status: bool = False):
 #     try:
 #         # Create the data to be inserted
@@ -48,7 +47,7 @@ async def get_all_flex_messages(page: int = 1, per_page: int = 10):
         flex_messages = collection.find().skip(start_index).limit(per_page)
         # Serialize the data
         serialized_data = datas_serializer(flex_messages)
-        return {"status": "Ok", "message": serialized_data}
+        return {"message": serialized_data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -58,7 +57,7 @@ async def get_flex_message(message_id: str):
         flex_message = collection.find_one({"id": message_id})
         if flex_message:
             serialized_data = datas_serializer([flex_message])
-            return {"status": "Ok", "message": serialized_data}
+            return { "message": serialized_data}
         else:
             raise HTTPException(status_code=404, detail="Flex message not found")
     
