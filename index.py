@@ -12,4 +12,10 @@ app.add_middleware(
     allow_headers=['*']
 )
 
+
+@app.get("/")
+def main_page():
+    return "Welcome to Flexaver."
+
+
 app.include_router(user)

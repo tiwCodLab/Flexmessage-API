@@ -16,6 +16,8 @@ class Flexmessage(BaseModel):
 
 class code_dict(BaseModel):
     type: str = None
+    direction: str = None
+    size: str = None
     header: dict = None
     hero: dict = None
     body: dict = None
