@@ -14,7 +14,7 @@ async def create_upload_file(name: str = Body(...) ,category: str =  Body(...)  
         flex_message = Flexmessage(
             name=name,
             category=category,
-            code_flexmessage=code_flexmessage.dict(),
+            code_flexmessage=code_flexmessage.dict(exclude_unset=True),
             status=status
         )
         # Insert data into the database
