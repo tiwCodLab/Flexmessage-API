@@ -94,7 +94,7 @@ async def get_flex_messages_by_category(category: str):
         
         serialized_data = datas_serializer(flex_messages)
         
-        return {"status": "Ok", "message": serialized_data}
+        return {"message": serialized_data}
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
