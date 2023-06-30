@@ -21,4 +21,5 @@ class code_dict(BaseModel):
     header: dict = None
     hero: dict = None
     body: dict = None
+    styles: dict = None
     footer: dict = None
