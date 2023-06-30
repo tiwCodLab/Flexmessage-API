@@ -1,5 +1,5 @@
 from fastapi import APIRouter,HTTPException,Body
-from models.flexaver_models import Flexmessage ,code_dict
+from models.flexaver_models import Flexmessage ,CodeDict
 from schemas.flexaver_schema import flexmessages_serializer, datas_serializer
 from config.db import collection
 user = APIRouter()
@@ -8,7 +8,7 @@ user = APIRouter()
 
 
 @user.post("/api/flexmessage/")
-async def create_upload_file(name: str = Body(...) ,category: str =  Body(...)  , code_flexmessage: code_dict =  Body(...)  , status: bool =  Body(False)):
+async def create_upload_file(name: str = Body(...) ,category: str =  Body(...)  , code_flexmessage: CodeDict =  Body(...)  , status: bool =  Body(False)):
     try:
         # Create the data to be inserted
         flex_message = Flexmessage(
@@ -53,7 +53,7 @@ async def get_flex_message(message_id: str):
 
 
 @user.put("/api/flexmessage/{message_id}")
-async def update_flex_message(message_id: str, name: str = Body(...), category: str = Body(...), code_flexmessage: code_dict = Body(...), status: bool = Body(False)):
+async def update_flex_message(message_id: str, name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
     try:
         # Find the flex message by ID
         flex_message = collection.find_one({"id": message_id})

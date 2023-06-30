@@ -14,12 +14,13 @@ class Flexmessage(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
-class code_dict(BaseModel):
+class CodeDict(BaseModel):
     type: str = None
     direction: str = None
     size: str = None
     header: dict = None
     hero: dict = None
+    contents: object = None
     body: dict = None
     styles: dict = None
     footer: dict = None
