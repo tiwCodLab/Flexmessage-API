@@ -5,24 +5,53 @@ from config.db import collection
 user = APIRouter()
 
 
-
-
-@user.post("/api/flexmessage/")
-async def create_upload_file(name: str = Body(...) ,category: str =  Body(...)  , code_flexmessage: CodeDict =  Body(...)  , status: bool =  Body(False)):
+current_id = 0
+@user.post("/api/")
+async def create_flexmessage(name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
+    global current_id
     try:
         # Create the data to be inserted
         flex_message = Flexmessage(
             name=name,
             category=category,
             code_flexmessage=code_flexmessage.dict(exclude_unset=True),
-            status=status
+            status=status,
+            id=current_id + 1
         )
+        current_id += 1
         # Insert data into the database
-        collection.insert_one(flex_message.dict()).inserted_id
+        inserted_id = collection.insert_one(flex_message.dict()).inserted_id
         return {"status": "Success"}
-    
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@user.post("/api/flexmessage/")
+async def create_flex_message(name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
+    try:
+        # Get the current counter value from the database
+        latest_document = collection.find().sort('_id', -1).limit(1).next()
+        current_counter = latest_document['id']
+        # Increment the counter
+        new_counter = current_counter + 1
+        # Update the counter value in the database
+        # collection.update_one({}, {'$set': {'id': new_counter}})
+        # Create the data to be inserted
+        flex_message = Flexmessage(
+            name=name,
+            category=category,
+            code_flexmessage=code_flexmessage.dict(exclude_unset=True),
+            status=status,
+            id=new_counter
+        )
+        # Insert data into the database
+        inserted_id = collection.insert_one(flex_message.dict()).inserted_id
+        return {"status": "Success"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @user.get("/api/flexmessage/")

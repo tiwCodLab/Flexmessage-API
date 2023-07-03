@@ -4,14 +4,24 @@ import uuid
 from datetime import datetime
 
 
+# class Flexmessage(BaseModel):
+#     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+#     name: str = None
+#     category: str = None
+#     photo: str = None
+#     code_flexmessage:  Dict[str, Any] = None
+#     status: bool = Field(default=False)
+#     created_at: datetime = Field(default_factory=datetime.utcnow)
+
 class Flexmessage(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    id: int
     name: str = None
     category: str = None
     photo: str = None
-    code_flexmessage:  Dict[str, Any] = None
+    code_flexmessage: Dict[str, Any] = None
     status: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    id: int
 
 
 class CodeDict(BaseModel):
