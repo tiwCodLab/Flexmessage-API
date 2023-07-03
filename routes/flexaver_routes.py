@@ -68,7 +68,7 @@ async def get_all_flex_messages(page: int = 1, per_page: int = 10):
         raise HTTPException(status_code=500, detail=str(e))
 
 @user.get("/api/flexmessage/{message_id}")
-async def get_flex_message(message_id: str):
+async def get_flex_message(message_id: int):
     try:
         flex_message = collection.find_one({"id": message_id})
         if flex_message:
@@ -82,7 +82,7 @@ async def get_flex_message(message_id: str):
 
 
 @user.put("/api/flexmessage/{message_id}")
-async def update_flex_message(message_id: str, name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
+async def update_flex_message(message_id: int, name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
     try:
         # Find the flex message by ID
         flex_message = collection.find_one({"id": message_id})
@@ -104,7 +104,7 @@ async def update_flex_message(message_id: str, name: str = Body(...), category: 
     
 
 @user.delete("/api/flexmessage/{message_id}")
-async def delete_flex_message(message_id: str):
+async def delete_flex_message(message_id: int):
     try:
         result = collection.delete_one({"id": message_id})
         if result.deleted_count > 0:
@@ -130,39 +130,3 @@ async def get_flex_messages_by_category(category: str):
 
 
 
-
-
-# @user.post("/")
-# async def create_flex_message(data: Flexmessage):
-#     code_dict = data.dict()
-#     id = collection.insert_one(code_dict)
-#     # Read the newly inserted data from the database
-#     inserted_id = collection.insert_one(id.dict()).inserted_id
-#     # Serialize the data into the desired format
-#     # serialized_data = flexmessages_serializer([inserted_data])
-#     return {"status": "Success", }
-
-
-# async def create_upload_file(file: UploadFile = File(...),name: str = "", category: str = "", code: Dict[str, Any] = "", status: bool = False):
-#     file.filename = f"{uuid.uuid4()}.jpg"
-#     contents = await file.read()
-
-#         # Save the Flexmessage object or perform other operations
-#     with open(f"{IMAGEDIR}{file.filename}", "wb") as f:
-#         f.write(contents)
-
-#     # Save the file
-#     with open(f"{IMAGEDIR}{file.filename}", "wb") as f:
-#         f.write(contents)
-#     # Create the Flexmessage object
-#     flex_message = Flexmessage(
-#         name=name,
-#         category=category,
-#         photo=file.filename,  # กำหนดชื่อไฟล์ภาพที่ต้องการ
-#         code=code,
-#         status=status
-#     )
-
-#     data = collection.insert_one(flex_message.c)
-#     # Read the newly inserted data from the database
-#     return {"status": "Success"}
