@@ -26,7 +26,7 @@ async def create_flexmessage(name: str = Body(...), category: str = Body(...), c
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
+# เพิ่มข้อมูล
 @user.post("/api/flexmessage/")
 async def create_flex_message(name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
     try:
@@ -36,7 +36,6 @@ async def create_flex_message(name: str = Body(...), category: str = Body(...), 
         # Increment the counter
         new_counter = current_counter + 1
         # Update the counter value in the database
-        # collection.update_one({}, {'$set': {'id': new_counter}})
         # Create the data to be inserted
         flex_message = Flexmessage(
             name=name,
@@ -53,7 +52,7 @@ async def create_flex_message(name: str = Body(...), category: str = Body(...), 
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
+# เรียกดูข้อมูลทั้งหมด
 @user.get("/api/flexmessage/")
 async def get_all_flex_messages(page: int = 1, per_page: int = 10):
     try:
