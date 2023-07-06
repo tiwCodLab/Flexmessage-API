@@ -4,3 +4,4 @@ pymongo
 python-dotenv
 pyrebase4
 firebase-admin
+python-multipart
