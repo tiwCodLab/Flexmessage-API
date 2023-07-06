@@ -1,16 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Any, Dict
 from datetime import datetime
-
-
-class Flexmessage(BaseModel):
-    id: int
-    name: str = None
-    category: str = None
-    photo: str = None
-    code_flexmessage: Dict[str, Any] = None
-    status: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 # เป็นโค้ด json ของ message
@@ -26,11 +15,12 @@ class CodeDict(BaseModel):
     footer: dict = None
 
 
-# class Flexmessage(BaseModel):
-#     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-#     name: str = None
-#     category: str = None
-#     photo: str = None
-#     code_flexmessage:  Dict[str, Any] = None
-#     status: bool = Field(default=False)
-#     created_at: datetime = Field(default_factory=datetime.utcnow)
+class Flexmessage(BaseModel):
+    id: int = None
+    name: str = None
+    category: str = None
+    image: str = None
+    code_flexmessage: dict = Field(
+        default_factory=lambda: CodeDict().dict(exclude_unset=True))
+    status: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow)

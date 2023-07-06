@@ -1,51 +1,72 @@
-from fastapi import APIRouter,HTTPException,Body
+from fastapi import APIRouter,HTTPException,Body, UploadFile,File,Form
 from models.flexaver_models import Flexmessage ,CodeDict
-from schemas.flexaver_schema import flexmessages_serializer, datas_serializer
+from schemas.flexaver_schema import  datas_serializer
 from config.db import collection
-user = APIRouter()
+from config.firebase_config import config
+import pyrebase
 
+user = APIRouter()
 
 current_id = 0
 @user.post("/api/")
-async def create_flexmessage(name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
+async def create_flexmessage(data:Flexmessage):
     global current_id
     try:
         # Create the data to be inserted
-        flex_message = Flexmessage(
-            name=name,
-            category=category,
-            code_flexmessage=code_flexmessage.dict(exclude_unset=True),
-            status=status,
-            id=current_id + 1
-        )
         current_id += 1
+        data.id = current_id
         # Insert data into the database
-        inserted_id = collection.insert_one(flex_message.dict()).inserted_id
+        inserted_id = collection.insert_one(data.dict()).inserted_id
         return {"status": "Success"}
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+# upload img
+@user.post("/upload/image/")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        latest_document = collection.find().sort('id', -1).limit(1).next()
+        current_counter = latest_document['id']
+        # Increment the counter
+        new_counter = current_counter + 1
+        firebase = pyrebase.initialize_app(config)
+        storage = firebase.storage()
+
+        file.filename = f"{new_counter}.jpg"
+        contents = await file.read()
+    
+        storage.child(file.filename).put(contents)
+        file_url = storage.child(file.filename).get_url(None)
+        print(file_url)
+    # Insert data into the database
+        return {"status": "Success","urlimg":file_url}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
 # เพิ่มข้อมูล
 @user.post("/api/flexmessage/")
-async def create_flex_message(name: str = Body(...), category: str = Body(...), code_flexmessage: CodeDict = Body(...), status: bool = Body(False)):
+async def create_flex_message(data: Flexmessage ):
     try:
-        # Get the current counter value from the database
-        latest_document = collection.find().sort('_id', -1).limit(1).next()
+        # เรียกดูในฐานข้อมูลว่าถึง id ไหน
+        latest_document = collection.find().sort('id', -1).limit(1).next()
         current_counter = latest_document['id']
         # Increment the counter
         new_counter = current_counter + 1
         # Update the counter value in the database
-        # Create the data to be inserted
-        flex_message = Flexmessage(
-            name=name,
-            category=category,
-            code_flexmessage=code_flexmessage.dict(exclude_unset=True),
-            status=status,
-            id=new_counter
-        )
+
+        imgName = f"{new_counter}.jpg"
+        # ฐานข้อมูล firebase
+        firebase = pyrebase.initialize_app(config)
+        storage = firebase.storage()
+
+        file_url = storage.child(imgName).get_url(None)
+        print(file_url)
+
+        data.id = new_counter
+        data.image = str(file_url)
         # Insert data into the database
-        inserted_id = collection.insert_one(flex_message.dict()).inserted_id
+        inserted_id = collection.insert_one(data.dict()).inserted_id
         return {"status": "Success"}
 
     except Exception as e:
@@ -126,6 +147,5 @@ async def get_flex_messages_by_category(category: str):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 

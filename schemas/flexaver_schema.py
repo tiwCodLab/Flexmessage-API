@@ -21,7 +21,7 @@ def data_serializer(data) -> dict:
         "id": data["id"],
         "name": data["name"],
         "category": data["category"],
-        "photo": data["photo"],
+        "image": data["image"],
         "code_flexmessage": data["code_flexmessage"],
         "status": data["status"]
     }
