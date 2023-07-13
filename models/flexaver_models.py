@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# เป็นโค้ด json ของ message
+# โค้ด json ของ message
 class CodeDict(BaseModel):
     type: str = None
     direction: str = None

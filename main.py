@@ -16,6 +16,5 @@ app.add_middleware(
 @app.get("/")
 def main_page():
     return "Welcome to Flexaver."
-
-
+ 
 app.include_router(user)

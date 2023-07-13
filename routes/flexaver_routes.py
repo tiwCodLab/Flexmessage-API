@@ -50,7 +50,7 @@ async def upload_file(file: UploadFile = File(...)):
 
 # เพิ่มข้อมูล
 @user.post("/api/flexmessage/")
-async def create_flex_message(data: Flexmessage):
+async def create_flex_message(flexmessage: Flexmessage):
     try:
         # เรียกดูในฐานข้อมูลว่าถึง id ไหน
         latest_document = collection.find().sort('id', -1).limit(1).next()
@@ -67,10 +67,11 @@ async def create_flex_message(data: Flexmessage):
         file_url = storage.child(imgName).get_url(None)
         print(file_url)
 
-        data.id = new_counter
-        data.image = str(file_url)
+        flexmessage.id = new_counter
+        flexmessage.image = str(file_url)
+
         # Insert data into the database
-        inserted_id = collection.insert_one(data.dict()).inserted_id
+        inserted_id = collection.insert_one(flexmessage.dict()).inserted_id
         return {"status": "Success"}
 
     except Exception as e:
@@ -158,6 +159,29 @@ async def get_flex_messages_by_category(category: str):
         flex_messages = collection.find({"category": category})
 
         serialized_data = datas_serializer(flex_messages)
+
+        return {"message": serialized_data}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@user.get("/api/flexmessage/landing/{category}")
+async def get_flex_messages_landing(category: str):
+    try:
+        page = 1
+        limit = 2
+        # Calculate the skip count based on the page and limit
+        skip_count = (page - 1) * limit
+
+        # Query the database to get flex messages with the specified category
+        flex_messages = collection.find(
+            {"category": category}).skip(skip_count).limit(limit)
+
+        # Convert the flex_messages cursor to a list
+        flex_messages_list = list(flex_messages)
+
+        serialized_data = datas_serializer(flex_messages_list)
 
         return {"message": serialized_data}
 
