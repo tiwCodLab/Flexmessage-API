@@ -68,7 +68,7 @@ async def create_flex_message(flexmessage: Flexmessage):
         print(file_url)
 
         flexmessage.id = new_counter
-        # flexmessage.image = str(file_url)
+        flexmessage.image = str(file_url)
 
         # Insert data into the database
         collection.insert_one(flexmessage.dict()).inserted_id
