@@ -18,7 +18,7 @@ async def create_flexmessage(data: Flexmessage):
         current_id += 1
         data.id = current_id
         # Insert data into the database
-        inserted_id = collection.insert_one(data.dict()).inserted_id
+        collection.insert_one(data.dict()).inserted_id
         return {"status": "Success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -68,10 +68,10 @@ async def create_flex_message(flexmessage: Flexmessage):
         print(file_url)
 
         flexmessage.id = new_counter
-        flexmessage.image = str(file_url)
+        # flexmessage.image = str(file_url)
 
         # Insert data into the database
-        inserted_id = collection.insert_one(flexmessage.dict()).inserted_id
+        collection.insert_one(flexmessage.dict()).inserted_id
         return {"status": "Success"}
 
     except Exception as e:
