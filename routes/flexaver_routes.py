@@ -153,12 +153,20 @@ async def delete_flex_message(message_id: int):
 
 
 @user.get("/api/flexmessage/category/{category}")
-async def get_flex_messages_by_category(category: str):
+async def get_flex_messages_by_category(category: str, page: int = 1):
     try:
-        # Query the database to get flex messages with the specified category
-        flex_messages = collection.find({"category": category})
+        limit = 10
+        # Calculate the skip count based on the page and limit
+        skip_count = (page - 1) * limit
 
-        serialized_data = datas_serializer(flex_messages)
+        # Query the database to get flex messages with the specified category
+        flex_messages = collection.find(
+            {"category": category}).skip(skip_count).limit(limit)
+
+        # Convert the flex_messages cursor to a list
+        flex_messages_list = list(flex_messages)
+
+        serialized_data = datas_serializer(flex_messages_list)
 
         return {"message": serialized_data}
 
