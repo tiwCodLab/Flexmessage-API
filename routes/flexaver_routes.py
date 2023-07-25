@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, HTTPException, Body, UploadFile, File, Form
 from models.flexaver_models import Flexmessage, CodeDict
 from schemas.flexaver_schema import datas_serializer
@@ -193,5 +194,22 @@ async def get_flex_messages_landing(category: str):
 
         return {"message": serialized_data}
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@user.get("/searchFlexMessages/", response_model=List[Flexmessage])
+async def search_flex_messages(search_text: str):
+    try:
+        # ใช้เงื่อนไขค้นหาในฐานข้อมูล เช่น ค้นหาข้อความที่มี search_text อยู่ในชื่อหรือหมวดหมู่ และตรงกับ status ที่กำหนด
+        flex_messages = collection.find({
+            "$or": [
+                {"name": {"$regex": search_text, "$options": "i"}},
+                {"code_flexmessage.header.contents.text": {
+                    "$regex": search_text, "$options": "i"}}
+            ]
+        })
+        serialized_data = datas_serializer(flex_messages)
+        return serialized_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
