@@ -82,7 +82,7 @@ async def create_flex_message(flexmessage: Flexmessage):
 @user.get("/api/flexmessage/")
 async def get_all_flex_messages(page: int = 1):
     try:
-        per_page = 10
+        per_page = 12
         # Calculate the starting index
         start_index = (page - 1) * per_page
         # Query the database to get a slice of data
@@ -155,7 +155,7 @@ async def delete_flex_message(message_id: int):
 @user.get("/api/flexmessage/category/{category}")
 async def get_flex_messages_by_category(category: str, page: int = 1):
     try:
-        limit = 10
+        limit = 12
         # Calculate the skip count based on the page and limit
         skip_count = (page - 1) * limit
 
